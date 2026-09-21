@@ -210,7 +210,7 @@ This makes the project easier to maintain and extend without introducing a front
 
 ## 📸 Preview
 
-![Preview screen](.prview.png)
+![Preview screen](.preview.png)
 
 ---
 
