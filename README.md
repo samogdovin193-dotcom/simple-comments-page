@@ -2,34 +2,23 @@
 
 A vanilla JavaScript comments application with user authentication, nested replies, comment moderation, editing, deletion, sorting, and local browser persistence.
 
-The project was originally created as a small frontend coding exercise and was later expanded and refactored into a modular JavaScript application suitable for portfolio use.
+The project was originally created as a small frontend coding exercise and was later expanded and refactored into a modular JavaScript application.
 
 ---
 
 ## 🚀 Features
 
 - 👤 User registration and login
-- 🔐 Session-based authentication using `sessionStorage`
-- 💾 Persistent comments and user data using `localStorage`
-- 💬 Add comments as a logged-in user
-- 🌳 Nested reply structure
-- ↩️ Reply to any comment
+- 💬 Add comments and nested replies
 - ✏️ Edit your own comments
-- 🗑️ Delete your own comments
-- ⚠️ Confirmation before deleting a comment
-- 🧹 Deleted-comment handling that preserves reply structure when necessary
-- 👁️ Show or hide replies for root comments
-- 🔃 Sort root comments by:
-  - Newest first
-  - Oldest first
-
-- 🔢 Character counter with a 2000-character limit
+- 🗑️ Delete your own comments with confirmation
+- 👁️ Expand or collapse replies
+- 🔃 Sort root comments by newest or oldest
+- 🔢 2000-character limit with live character counter
 - 🛡️ Comment moderation using a Web Worker
-- 🚫 Case-insensitive inappropriate-word detection
-- 🔎 Detection of separated variants such as `w.a.r`, `w-a-r`, or `w a r`
-- ✅ Avoids false positives in unrelated words such as `warrior`
+- 💾 Local browser persistence
 - 🧾 Localized timestamp formatting
-- 🔒 User-generated comment content is rendered using `textContent` to avoid HTML injection
+- 🔒 User-generated content rendered safely using textContent
 
 ---
 
@@ -74,7 +63,7 @@ simple-comments-page/
 - `auth.js` – registration, login, logout, and authentication UI
 - `comments.js` – comment creation, replies, editing, deletion, rendering, sorting, and counters
 - `dom.js` – cached DOM element references
-- `moderation.js` – Web Worker creation and moderation communication
+- `moderation.js` – Web Worker lifecycle and moderation communication
 - `state.js` – shared application state
 - `storage.js` – `localStorage` and `sessionStorage` access
 - `utils.js` – reusable helper functions
@@ -89,32 +78,11 @@ Root comments do not have a parent, while replies store the ID of the comment th
 
 The application recursively renders the comment tree so replies remain attached to their parent comments regardless of nesting depth.
 
-Users can:
+When a comment is deleted, the application removes the whole subtree when possible. If replies from other users need to remain visible, the deleted comment is replaced with:
 
-- Add root comments
-- Reply to existing comments
-- Edit their own comments
-- Delete their own comments
-- Expand or collapse replies
-- Sort root comments by date
-
----
-
-## 🗑️ Comment Deletion
-
-Before deleting a comment, the application asks the user for confirmation.
-
-Deletion behavior also takes the reply tree into account.
-
-If the entire subtree can safely be removed, it is deleted completely.
-
-If removing the comment would affect replies that need to remain visible, the original comment is replaced with:
-
-```text
 Príspevok bol odstránený.
-```
 
-This preserves the structure of the discussion.
+This keeps the discussion structure intact.
 
 ---
 
@@ -218,60 +186,11 @@ It should instead be served through HTTP or HTTPS.
 
 ---
 
-## 🎨 Styling
-
-The interface uses:
-
-- `#F5F5F5` page background
-- `18px` base font size
-- `"Lucida Handwriting"` font family with fallbacks
-- Custom Reply and Add Comment button styles
-- Visual indentation for nested replies
-- Responsive text wrapping for long comments
-
-Headings and metadata use relative font sizes to maintain visual hierarchy and readability.
-
----
-
 ## 🧩 Architecture
 
 The JavaScript was refactored from a single large application file into separate ES modules.
 
-The goal of the refactor was to keep responsibilities separated:
-
-```text
-app.js
-        ↓
-Initialization and event wiring
-
-auth.js
-        ↓
-Authentication
-
-comments.js
-        ↓
-Comment functionality
-
-storage.js
-        ↓
-Browser persistence
-
-moderation.js
-        ↓
-Web Worker moderation
-
-state.js
-        ↓
-Shared application state
-
-dom.js
-        ↓
-DOM references
-
-utils.js
-        ↓
-Reusable helpers
-```
+The goal of the refactor was to keep responsibilities separated.
 
 This makes the project easier to maintain and extend without introducing a frontend framework.
 
