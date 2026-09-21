@@ -208,9 +208,15 @@ This makes the project easier to maintain and extend without introducing a front
 
 ---
 
+## 📸 Preview
+
+![Preview screen](.prview.png)
+
+---
+
 ## 🌍 Live Demo
 
-Deployment coming soon.
+[Simple-comments-page](https://simple-comments-page-eight.vercel.app/)
 
 ---
 
