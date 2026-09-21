@@ -1,3 +1,8 @@
+import {
+  formatTimestamp,
+  createId
+} from "./utils.js";
+
 (() => {
   "use strict";
 
@@ -824,27 +829,6 @@
 
     counter.textContent =
       `${textarea.value.length} / ${maxLength}`;
-  }
-
-  function formatTimestamp(timestamp) {
-    const date = new Date(timestamp);
-
-    if (Number.isNaN(date.getTime())) {
-      return timestamp;
-    }
-
-    return date.toLocaleString(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short"
-    });
-  }
-
-  function createId() {
-    if (crypto.randomUUID) {
-      return crypto.randomUUID();
-    }
-
-    return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   }
 
   init();
