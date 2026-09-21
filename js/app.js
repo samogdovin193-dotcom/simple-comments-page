@@ -8,10 +8,9 @@ import {
   clearSession
 } from "./storage.js";
 
-import {
-  formatTimestamp,
-  createId
-} from "./utils.js";
+import {formatTimestamp, createId} from "./utils.js";
+import {moderateText, cancelAllModeration} from "./moderation.js";
+import { elements } from "./dom.js";
 
 (() => {
   "use strict";
@@ -21,41 +20,8 @@ import {
   const state = {
     comments: loadComments(),
     currentUser: loadSession(),
-    moderationWorkers: new Set(),
     editingCommentId: null,
     sortOrder: "newest"
-  };
-
-  const elements = {
-    guestControls: document.getElementById("guestControls"),
-    userControls: document.getElementById("userControls"),
-    loggedInUser: document.getElementById("loggedInUser"),
-    logoutButton: document.getElementById("logoutButton"),
-    showLoginButton: document.getElementById("showLoginButton"),
-    showRegisterButton: document.getElementById("showRegisterButton"),
-    authForms: document.getElementById("authForms"),
-    loginFormContainer: document.getElementById("loginFormContainer"),
-    registerFormContainer: document.getElementById("registerFormContainer"),
-    loginForm: document.getElementById("loginForm"),
-    registerForm: document.getElementById("registerForm"),
-    cancelLoginButton: document.getElementById("cancelLoginButton"),
-    cancelRegisterButton: document.getElementById("cancelRegisterButton"),
-    loginMessage: document.getElementById("loginMessage"),
-    registerMessage: document.getElementById("registerMessage"),
-    commentForm: document.getElementById("commentForm"),
-    commentText: document.getElementById("commentText"),
-    addCommentButton: document.getElementById("addCommentButton"),
-    replyToId: document.getElementById("replyToId"),
-    replyIndicator: document.getElementById("replyIndicator"),
-    replyToAuthor: document.getElementById("replyToAuthor"),
-    cancelReplyButton: document.getElementById("cancelReplyButton"),
-    guestNotice: document.getElementById("guestNotice"),
-    moderationStatus: document.getElementById("moderationStatus"),
-    commentsContainer: document.getElementById("commentsContainer"),
-    commentCount: document.getElementById("commentCount"),
-    commentTextArea: document.getElementById("commentTextArea"),
-    commentCharacterCount: document.getElementById("commentCharacterCount"),
-    commentSort: document.getElementById("commentSort"),
   };
 
   function init() {
@@ -212,8 +178,7 @@ import {
   }
 
   function logout() {
-    state.moderationWorkers.forEach((worker) => worker.terminate());
-    state.moderationWorkers.clear();
+    cancelAllModeration();
 
     clearSession();
     state.currentUser = null;
@@ -263,41 +228,6 @@ import {
     }
 
     elements.addCommentButton.disabled = false;
-  }
-
-  function moderateText(text) {
-    return new Promise((resolve) => {
-      const worker = new Worker("./worker.js");
-      state.moderationWorkers.add(worker);
-      let finished = false;
-
-      const finish = (result) => {
-        if (finished) {
-          return;
-        }
-
-        finished = true;
-        worker.terminate();
-        state.moderationWorkers.delete(worker);
-        resolve(result);
-      };
-
-      worker.addEventListener("message", (event) => {
-        finish(event.data || { allowed: false, error: "Moderation could not be completed. Please try again." });
-      }, { once: true });
-
-      worker.addEventListener("error", () => {
-        finish({
-          allowed: false,
-          error: "Moderation could not be completed. Please try again."
-        });
-      }, { once: true });
-
-      worker.postMessage({
-        type: "check-comment",
-        text
-      });
-    });
   }
 
   function addComment(text, parentId) {
