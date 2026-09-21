@@ -1,16 +1,20 @@
 import {
+  loadComments,
+  loadSession,
+  getUsers,
+  saveUsers,
+  saveComments,
+  saveSession,
+  clearSession
+} from "./storage.js";
+
+import {
   formatTimestamp,
   createId
 } from "./utils.js";
 
 (() => {
   "use strict";
-
-  const STORAGE_KEYS = {
-    users: "simpleComments.users",
-    session: "simpleComments.session",
-    comments: "simpleComments.comments"
-  };
 
   const DELETED_COMMENT_TEXT = "Príspevok bol odstránený.";
 
@@ -58,7 +62,7 @@ import {
     bindEvents();
 
     if (pruneDeletedBranches()) {
-      saveComments();
+      saveComments(state.comments);
     }
 
     updateCharacterCounter(
@@ -99,43 +103,6 @@ import {
       state.sortOrder = elements.commentSort.value;
       renderComments();
     });
-  }
-
-  function loadComments() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEYS.comments);
-      const comments = raw ? JSON.parse(raw) : [];
-      return Array.isArray(comments) ? comments : [];
-    } catch {
-      return [];
-    }
-  }
-
-  function loadSession() {
-    try {
-      const raw = sessionStorage.getItem(STORAGE_KEYS.session);
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  }
-
-  function getUsers() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEYS.users);
-      const users = raw ? JSON.parse(raw) : [];
-      return Array.isArray(users) ? users : [];
-    } catch {
-      return [];
-    }
-  }
-
-  function saveUsers(users) {
-    localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
-  }
-
-  function saveComments() {
-    localStorage.setItem(STORAGE_KEYS.comments, JSON.stringify(state.comments));
   }
 
   function renderAuthState() {
@@ -211,7 +178,7 @@ import {
     saveUsers(users);
 
     state.currentUser = { username };
-    sessionStorage.setItem(STORAGE_KEYS.session, JSON.stringify(state.currentUser));
+    saveSession(state.currentUser);
 
     closeAuth();
     renderAuthState();
@@ -237,7 +204,7 @@ import {
     }
 
     state.currentUser = { username: user.username };
-    sessionStorage.setItem(STORAGE_KEYS.session, JSON.stringify(state.currentUser));
+    saveSession(state.currentUser);
 
     closeAuth();
     renderAuthState();
@@ -248,7 +215,7 @@ import {
     state.moderationWorkers.forEach((worker) => worker.terminate());
     state.moderationWorkers.clear();
 
-    sessionStorage.removeItem(STORAGE_KEYS.session);
+    clearSession();
     state.currentUser = null;
     state.editingCommentId = null;
 
@@ -344,7 +311,7 @@ import {
     };
 
     state.comments.push(comment);
-    saveComments();
+    saveComments(state.comments);
     renderComments();
   }
 
@@ -671,7 +638,7 @@ import {
     comment.timestamp = new Date().toISOString();
     state.editingCommentId = null;
 
-    saveComments();
+    saveComments(state.comments);
     renderComments();
   }
 
@@ -703,7 +670,7 @@ import {
     }
 
     pruneDeletedBranches();
-    saveComments();
+    saveComments(state.comments);
     renderComments();
   }
 
