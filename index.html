@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Comments Page</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="page-header">
+      <div>
+        <h1>Comments</h1>
+        <p class="subtitle">A simple discussion.</p>
+      </div>
+
+      <section class="auth-panel" aria-label="Authentication">
+        <div id="guestControls" class="auth-controls">
+          <button id="showLoginButton" class="secondary-button" type="button">Login</button>
+          <button id="showRegisterButton" class="secondary-button" type="button">Register</button>
+        </div>
+
+        <div id="userControls" class="auth-controls hidden">
+          <span id="loggedInUser" class="user-label"></span>
+          <button id="logoutButton" class="secondary-button" type="button">Logout</button>
+        </div>
+      </section>
+    </header>
+
+    <section id="authForms" class="panel hidden" aria-live="polite">
+      <div id="loginFormContainer" class="auth-form hidden">
+        <h2>Login</h2>
+        <form id="loginForm" novalidate>
+          <label for="loginUsername">Username</label>
+          <input id="loginUsername" name="username" type="text" autocomplete="username" required>
+
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+
+          <div class="form-actions">
+            <button class="primary-button" type="submit">Login</button>
+            <button id="cancelLoginButton" class="secondary-button" type="button">Cancel</button>
+          </div>
+          <p id="loginMessage" class="form-message" role="alert"></p>
+        </form>
+      </div>
+
+      <div id="registerFormContainer" class="auth-form hidden">
+        <h2>Register</h2>
+        <form id="registerForm" novalidate>
+          <label for="registerUsername">Username</label>
+          <input id="registerUsername" name="username" type="text" autocomplete="username" minlength="3" required>
+
+          <label for="registerPassword">Password</label>
+          <input id="registerPassword" name="password" type="password" autocomplete="new-password" minlength="4" required>
+
+          <label for="registerPasswordConfirm">Confirm password</label>
+          <input id="registerPasswordConfirm" name="passwordConfirm" type="password" autocomplete="new-password" minlength="4" required>
+
+          <div class="form-actions">
+            <button class="primary-button" type="submit">Register</button>
+            <button id="cancelRegisterButton" class="secondary-button" type="button">Cancel</button>
+          </div>
+          <p id="registerMessage" class="form-message" role="alert"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="composer panel hidden" id="commentTextArea">
+      <div class="section-heading">
+        <h2 id="composerTitle">Add a comment</h2>
+        <span id="guestNotice" class="guest-notice">Log in to add a comment or reply.</span>
+      </div>
+
+      <form id="commentForm">
+        <label for="commentText">Comment</label>
+        <textarea id="commentText" name="comment" rows="4" maxlength="2000"
+          placeholder="Write your comment..." required disabled></textarea>
+        <span id="commentCharacterCount" class="character-count">
+          0 / 2000
+        </span>
+
+        <input id="replyToId" type="hidden" value="">
+
+        <div id="replyIndicator" class="reply-indicator hidden">
+          Replying to <strong id="replyToAuthor"></strong>
+          <button id="cancelReplyButton" type="button" class="link-button">Cancel reply</button>
+        </div>
+
+        <div class="composer-footer">
+          <span id="moderationStatus" class="status-text" aria-live="polite"></span>
+          <button id="addCommentButton" class="add-comment-button" type="submit" disabled>Add Comment</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="comments-section">
+      <div class="section-heading">
+        <h2 id="commentsTitle">Discussion</h2>
+        <span id="commentCount" class="comment-count"></span>
+        <label class="sort-control">
+          Sort:
+          <select id="commentSort">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </label>
+      </div>
+      <div id="commentsContainer" class="comments-container" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
