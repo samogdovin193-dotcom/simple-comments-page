@@ -1,6 +1,4 @@
 import {
-  loadComments,
-  loadSession,
   getUsers,
   saveUsers,
   saveComments,
@@ -11,18 +9,12 @@ import {
 import {formatTimestamp, createId} from "./utils.js";
 import {moderateText, cancelAllModeration} from "./moderation.js";
 import { elements } from "./dom.js";
+import { state } from "./state.js";
 
 (() => {
   "use strict";
 
   const DELETED_COMMENT_TEXT = "Príspevok bol odstránený.";
-
-  const state = {
-    comments: loadComments(),
-    currentUser: loadSession(),
-    editingCommentId: null,
-    sortOrder: "newest"
-  };
 
   function init() {
     bindEvents();
